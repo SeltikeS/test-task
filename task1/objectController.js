@@ -1,11 +1,12 @@
 /* Class Point
- * Point in 2D area
- * default (0, 0) */
+ * Point in 3D area
+ * default (0, 0, 0) */
 
 class Point {
-  constructor(x = 0, y = 0) {
+  constructor(x = 0, y = 0, z = 0) {
     this._x = x;
     this._y = y;
+    this._z = z;
   }
 
   get x() {
@@ -21,21 +22,29 @@ class Point {
   set y(value) {
     this._y = value;
   }
+
+  get z() {
+    return this._z;
+  }
+  set z(value) {
+    this._z = value;
+  }
 }
 
 /* Class ObjectController
- * You can control point in 2D area
+ * You can control point in 3D area
  * setSpeed(speed) (m/sec)
  * setAcceleration(acceleration) (m/sec**2)
  * setAngle(angle) (deg)
  * move(time) (sec) - move point from start point to new point after *time* seconds
  * getPoints() - return array of points */
 class ObjectController {
-  constructor(point) {
+  constructor(point = new Point()) {
     this._point = point;
     this._speed = 0;
     this._acceleration = 0;
     this._angle = 0;
+    this._angleZ = 0;
     this._pointArray = [point];
   }
 
@@ -72,6 +81,17 @@ class ObjectController {
     return this._angle;
   }
 
+  setAngleZ(angle) {
+    if (angle) {
+      this._angleZ = angle;
+      return true;
+    }
+    return false;
+  }
+  getAngleZ() {
+    return this._angleZ;
+  }
+
   getPoints() {
     return this._pointArray;
   }
@@ -81,10 +101,13 @@ class ObjectController {
       const s = this._speed * time + (this._acceleration * time ** 2) / 2; // s = v0 * t + (a * t**2) / 2
       const v = this._speed + this._acceleration * time; // v = v0 + a * t
 
-      const x = this._point.x + s * Math.cos((this._angle * Math.PI) / 180); // x = x0 + s * cos(alfa)
-      const y = this._point.y + s * Math.sin((this._angle * Math.PI) / 180); // y = y0 + s * sin(alfa)
+      const sXY = s * Math.cos((this._angleZ * Math.PI) / 180); // s2D = s * cos(beta)
+      const z = this._point.z + s * Math.sin((this._angleZ * Math.PI) / 180); // z = z0 + s * sin(beta)
 
-      const newPoint = new Point(x, y);
+      const x = this._point.x + sXY * Math.cos((this._angle * Math.PI) / 180); // x = x0 + s2D * cos(alfa)
+      const y = this._point.y + sXY * Math.sin((this._angle * Math.PI) / 180); // y = y0 + s2D * sin(alfa)
+
+      const newPoint = new Point(x, y, z);
 
       this._point = newPoint;
       this._pointArray.push(newPoint);
@@ -96,4 +119,4 @@ class ObjectController {
   }
 }
 
-const obj = new ObjectController(new Point(0, 0));
+const obj = new ObjectController();
