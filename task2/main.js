@@ -16,9 +16,8 @@ class IndexedMap {
         this._size++;
       }
       this._map[key] = value;
-      return true;
     }
-    return false;
+    return this.print();
   }
 
   has(key) {
@@ -50,9 +49,7 @@ class IndexedMap {
   }
 
   remove(key) {
-    let value = null;
     if (key && this.has(key)) {
-      value = this._map[key];
       delete this._map[key];
       for (let idx in this._indexed) {
         if (this._indexed[idx] === key) {
@@ -62,7 +59,20 @@ class IndexedMap {
         }
       }
     }
-    return value;
+    return this.print();
+  }
+
+  print() {
+    const indexedArray = [];
+    for (let index in this._indexed) {
+      const element = {
+        index: index,
+        key: this._indexed[index],
+        value: this._map[this._indexed[index]],
+      };
+      indexedArray.push(element);
+    }
+    return indexedArray;
   }
 
   get size() {
